@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template, jsonify
 import boto.ec2
 import json
 app = Flask(__name__)
@@ -44,3 +44,5 @@ def test():
     instance = ec2_res.Instance(response["Reservations"][0]["Instances"][0]["InstanceId"])
 
     return json.dumps(instance.report_status())
+if __name__ == '__main__':
+  app.run()
