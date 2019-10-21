@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Instance Metadata</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="jumbotron text-center">
+    <form id="instance_form_filter" method="post" action="#">
+        <div class="form-group">
+            <label for="filter_name">Filter By:</label>
+            <div class="input-group mb-3">
+                <select class="form-control" name="filter_name" id="filter_name" required>
+
+                    <option value="affinity">affinity</option>
+                    <option value="architecture">architecture</option>
+                    <option value="availability-zone">availability-zone</option>
+                    <option value="dns-name">dns-name</option>
+                    <option value="hypervisor">hypervisor</option>
+                    <option value="image-id">image-id</option>
+                    <option value="instance-id">instance-id</option>
+                    <option value="instance-state-name">instance-state-name</option>
+                    <option value="instance-type">instance-type</option>
+                    <option value="instance.group-id">instance.group-id</option>
+                    <option value="instance.group-name">instance.group-name</option>
+                    <option value="key-name">key-name</option>
+                    <option value="owner-id">owner-id</option>
+                    <option value="private-dns-name">private-dns-name</option>
+                    <option value="private-ip-address">private-ip-address</option>
+                    <option value="product-code">product-code</option>
+                    <option value="reservation-id">reservation-id</option>
+                    <option value="subnet-id">subnet-id</option>
+                    <option value="tag">tag</option>
+                    <option value="tag-key">tag-key</option>
+                    <option value="tenancy">tenancy</option>
+                    <option value="virtualization-type">virtualization-type</option>
+                    <option value="vpc-id">vpc-id</option>
+                    <option value="custom">Custom Filter Criteria</option>
+                </select>
+                <input type="text" class="form-control hidden" placeholder="Tag Key" name="tag_key" id="tag_key">
+                <input type="text" class="form-control hidden" placeholder="Custom Filter" name="custom_filter" id="custom_filter">
+                <input type="text" class="form-control" placeholder="Comma separated filter values " name="filter_value" id="filter_value" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Filter Instances" class="btn btn-submit btn-primary">
+
+        </div>
+
+    </form>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                <p><b>Instance(s) Found: </b> <span id="instance_count">{{count}}</span></p>
+            </div>
+        </div>
+        <pre id="instances">
+        {% if not instances %}
+        <h3>No instances found!</h3>
+        {% endif %}
+        </pre>
+
+    </div>
+</div>
+
+</body>
+<script>
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    $(document).ready(function(){
+        $("#tag_key").hide();
+        $("#custom_filter").hide();
+        $("#instances").html(JSON.stringify({{instances|tojson|safe}}, undefined, 4));
+        $("#filter_name").change(function(){
+            console.log($(this).val())
+            if($(this).val()==="tag"){
+                $("#tag_key").show();
+            }else{
+                $("#tag_key").hide();
+            }
+            if($(this).val()==="custom"){
+                $("#custom_filter").show();
+            }else{
+                $("#custom_filter").hide();
+            }
+        });
+        $("#instance_form_filter").submit(function(e){
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: $SCRIPT_ROOT +"/instances",
+                data: $('#instance_form_filter').serialize(),
+                success: function (result) {
+                    $("#instance_count").text(result['count'])
+                    $("#instances").html(JSON.stringify(result['instances'], undefined, 4));
+                }
+            });
+        });
+
+    });
+
+
+</script>
+</html>
