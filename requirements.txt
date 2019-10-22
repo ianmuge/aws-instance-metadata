@@ -36,7 +36,7 @@ termcolor==1.1.0
 test-generator==0.1.1
 typing==3.7.4
 typing-extensions==3.7.4
-urllib3==1.22
+urllib3==1.24.2
 Werkzeug==0.16.0
 win-inet-pton==1.1.0
 wincertstore==0.2
