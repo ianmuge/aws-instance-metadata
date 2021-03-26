@@ -9,7 +9,7 @@ certifi==2019.6.16
 cffi==1.13.0
 Click==7.0
 colorama==0.4.1
-cryptography==2.7
+cryptography==3.2
 docutils==0.15.2
 Flask==1.1.1
 gast==0.2.2
